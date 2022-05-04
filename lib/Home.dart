@@ -9,8 +9,10 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var value = ''.obs;
+    var message = ''.obs;
     // ignore: unnecessary_new
     TextEditingController phoneNumber = new TextEditingController();
+    TextEditingController messageController = new TextEditingController();
 
     return Scaffold(
       body: Column(children: [
@@ -39,6 +41,7 @@ class Home extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: TextField(
             decoration: InputDecoration(
+              hintText: 'Phone Number',
               suffixIcon: IconButton(
                   onPressed: () {
                     Clipboard.getData(Clipboard.kTextPlain).then((value) {
@@ -49,10 +52,39 @@ class Home extends StatelessWidget {
                   icon: const Icon(Icons.content_paste)),
               border: const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(10.0))),
-              prefixText: '+91 ',
+              //prefixText: '+91 ',
+              isDense: true,
+              prefixIcon: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 10, 0),
+                    child: Text(
+                      "+91 ",
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
               contentPadding: const EdgeInsets.all(20),
             ),
             controller: phoneNumber,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: TextField(
+            minLines: 8,
+            maxLines: 10,
+            decoration: const InputDecoration(
+              hintText: 'Type your Message',
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))),
+              isDense: true,
+              contentPadding: EdgeInsets.all(20),
+            ),
+            controller: messageController,
           ),
         ),
         TextButton(
@@ -67,7 +99,8 @@ class Home extends StatelessWidget {
           ),
           onPressed: () async {
             value.value = phoneNumber.text.toString();
-            openWhatsapp('91' + value.value);
+            message.value = messageController.text.toString();
+            openWhatsapp('91' + value.value, message.value);
             //FlutterOpenWhatsapp.sendSingleMessage("918179015345", "Hello");
           },
           child: const Text('OPEN WHATSAPP'),
@@ -78,9 +111,10 @@ class Home extends StatelessWidget {
   }
 
   //Method to Open WhatsApp with Given Number
-  openWhatsapp(value) async {
+  openWhatsapp(value, msg) async {
     FocusManager.instance.primaryFocus?.unfocus();
-    var whatsappUrl = "whatsapp://send?phone=$value";
+    var whatsappUrl = "whatsapp://send?phone=$value&text=$msg";
+    print(whatsappUrl);
     await launch(whatsappUrl);
   }
 }
